@@ -22,9 +22,11 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+
 class Account(BaseModel):
     username: str
     password: str
+
 
 @app.post("/api/grade")
 async def get_grade(account: Account):
@@ -37,7 +39,7 @@ async def get_grade(account: Account):
         "changePass": "",
         "return_url": "null"
     }
-    
+
     session = requests.Session()
     session.post("https://info.hansung.ac.kr/servlet/s_gong.gong_login_ssl", data=data)
 
