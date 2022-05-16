@@ -2,8 +2,8 @@ from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
+import uvicorn
+import os
 
 import requests
 from util import parse
@@ -44,3 +44,6 @@ async def get_grade(account: Account):
     session.post("https://info.hansung.ac.kr/servlet/s_gong.gong_login_ssl", data=data)
 
     return parse(session, "https://info.hansung.ac.kr/jsp_21/student/grade/total_grade.jsp?viewMode=oc")
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", default=443)), log_level="info")
