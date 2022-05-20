@@ -11,7 +11,7 @@ from data import HEADER
 header = HEADER
 
 
-def parse(session, address):
+def parseGrade(session, address):
     grade_page = session.get(address, headers=header).text
 
     if len(grade_page) < 1000:

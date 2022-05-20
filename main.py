@@ -1,12 +1,14 @@
-from typing import Optional
-from fastapi import FastAPI
+from functools import lru_cache
+from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
+import uvicorn
+import os
 
 import requests
-from util import parse
+
+import config
+from util import parseGrade
 
 app = FastAPI()
 
@@ -28,8 +30,13 @@ class Account(BaseModel):
     password: str
 
 
+@lru_cache()
+def get_settings():
+    return config.Settings()
+
+
 @app.post("/api/grade")
-async def get_grade(account: Account):
+async def get_grade(account: Account, settings: config.Settings = Depends(get_settings)):
     id = account.username
     passwd = account.password
 
@@ -41,6 +48,9 @@ async def get_grade(account: Account):
     }
 
     session = requests.Session()
-    session.post("https://info.hansung.ac.kr/servlet/s_gong.gong_login_ssl", data=data)
+    session.post(settings.LOGIN_URL, data=data)
 
-    return parse(session, "https://info.hansung.ac.kr/jsp_21/student/grade/total_grade.jsp?viewMode=oc")
+    return parseGrade(session, settings.GRADE_URL)
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", default=443)), log_level="info")
