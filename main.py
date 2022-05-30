@@ -8,7 +8,7 @@ import os
 import requests
 
 import config
-from util import parseGrade
+from util import parseGrade, parseInfo
 
 app = FastAPI()
 
@@ -51,6 +51,24 @@ async def get_grade(account: Account, settings: config.Settings = Depends(get_se
     session.post(settings.LOGIN_URL, data=data)
 
     return parseGrade(session, settings.GRADE_URL)
+
+
+@app.post("/api/info")
+async def get_info(account: Account, settings: config.Settings = Depends(get_settings)):
+    id = account.username
+    passwd = account.password
+
+    data = {
+        "id": id,
+        "passwd": passwd,
+        "changePass": "",
+        "return_url": "null"
+    }
+
+    session = requests.Session()
+    session.post(settings.LOGIN_URL, data=data)
+
+    return parseInfo(session, settings.INFO_URL)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", default=443)), log_level="info")

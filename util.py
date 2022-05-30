@@ -53,3 +53,39 @@ def parseGrade(session, address):
 
     res_json = jsonable_encoder(json.dumps(res_list, indent="\t", ensure_ascii=False))
     return JSONResponse(content=res_json)
+
+
+def parseInfo(session, address):
+    info_page = session.get(address, headers=header).text
+
+    if len(info_page) < 1000:
+        return HTTPException(status_code=401, detail="아이디나 비밀번호가 잘못되었습니다.")
+
+    soup = bs4(info_page[4000:], 'lxml')
+
+    data = soup.select('table[class="table table-condensed"] > tr > td')
+
+    res = {}
+    res["pic"] = "https://info.hansung.ac.kr/tonicsoft/jik/register/" + data[0].select('img[name="sajin"]')[0].attrs["src"]
+
+    needData = ["성명", "제1트랙", "제2트랙", "학년", "상태", "입학일자"]
+    dataTitle = ["name", "track1", "track2", "grade", "status", "admission_date"]
+
+    index = 0
+    flag = False
+    for item in data:
+        p = re.sub(pattern="<[^>]*>", repl="", string=item.text.strip()).replace(" ", "")
+
+        if flag:
+            res[dataTitle[index]] = p
+            index += 1
+            flag = False
+
+            if index >= len(needData):
+                break
+
+        elif p.find(needData[index]) != -1:
+            flag = True
+
+    # res_json = jsonable_encoder(json.dumps(res, indent="\t", ensure_ascii=False))
+    return JSONResponse(content=res)
