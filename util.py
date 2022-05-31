@@ -15,7 +15,7 @@ def parseGrade(session, address):
     grade_page = session.get(address, headers=header).text
 
     if len(grade_page) < 1000:
-        return HTTPException(status_code=401, detail="아이디나 비밀번호가 잘못되었습니다.")
+        raise HTTPException(status_code=401, detail="아이디나 비밀번호가 잘못되었습니다.")
 
     soup = bs4(grade_page[40000:], 'lxml')
     data = soup.select('div.row > div[class="col-12 col-lg-6 col-print-6"]')
@@ -51,15 +51,15 @@ def parseGrade(session, address):
         res["subject"] = subject_2dlist
         res_list.append(res)
 
-    res_json = jsonable_encoder(json.dumps(res_list, indent="\t", ensure_ascii=False))
-    return JSONResponse(content=res_json)
+    # res_json = jsonable_encoder(json.dumps(res_list, indent="\t", ensure_ascii=False))
+    return JSONResponse(content=res_list)
 
 
 def parseInfo(session, address):
     info_page = session.get(address, headers=header).text
 
     if len(info_page) < 1000:
-        return HTTPException(status_code=401, detail="아이디나 비밀번호가 잘못되었습니다.")
+        raise HTTPException(status_code=401, detail="아이디나 비밀번호가 잘못되었습니다.")
 
     soup = bs4(info_page[4000:], 'lxml')
 
