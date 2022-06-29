@@ -23,7 +23,7 @@ def parseGrade(session, address):
     credits_string = ["register_credits", "earned_credits", "total_score", "average_credits", "percentile"]
     subject_string = ["classification", "name", "code", "credits", "grade", "track"]
 
-    res_list = []
+    resList = []
     for item in data:
         res = {}
         semester = re.sub(pattern="<[^>]*>", repl="",
@@ -42,17 +42,54 @@ def parseGrade(session, address):
         subject_2dlist = []
         subject_dict = {}
         for sub in subject:
-            subject_item = re.sub(pattern="<[^>]*>", repl="", string=sub.text).strip()
+            subject_item = htmlToText(sub)
             subject_dict[subject_string[len(subject_dict)]] = subject_item
 
             if len(subject_dict) >= 6:
                 subject_2dlist.append(subject_dict)
                 subject_dict = {}
         res["subject"] = subject_2dlist
-        res_list.append(res)
+        resList.append(res)
 
     # res_json = jsonable_encoder(json.dumps(res_list, indent="\t", ensure_ascii=False))
-    return JSONResponse(content=res_list)
+    return JSONResponse(content=resList)
+
+
+def parseNowGrade(session, address):
+    now_semester_grade_page = session.get(address, headers=header).text
+
+    if len(now_semester_grade_page) < 1000:
+        raise HTTPException(status_code=401, detail="아이디나 비밀번호가 잘못되었습니다.")
+
+    soup = bs4(now_semester_grade_page, 'lxml')
+
+    data = soup.select('table')[3].select('tr')[1:]
+
+    res = {}
+    resList = []
+    dataTitle = {
+        "1": "code",
+        "2": "name",
+        "4": "classification",
+        "5": "credits",
+        "9": "grade"
+    }
+
+    needIndex = [1, 2, 4, 5, 9]
+    for item in data:
+        itemList = item.select('td')
+
+        itemDict = {}
+        index = 0
+        for p in itemList:
+            p = htmlToText(p)
+
+            if index in needIndex:
+                itemDict[dataTitle[str(index)]] = p
+            index += 1
+
+        resList.append(itemDict)
+    return JSONResponse(content=resList)
 
 
 def parseInfo(session, address):
@@ -74,7 +111,7 @@ def parseInfo(session, address):
     index = 0
     flag = False
     for item in data:
-        p = re.sub(pattern="<[^>]*>", repl="", string=item.text.strip()).replace(" ", "")
+        p = htmlToText(item)
 
         if flag:
             res[dataTitle[index]] = p
@@ -89,3 +126,7 @@ def parseInfo(session, address):
 
     # res_json = jsonable_encoder(json.dumps(res, indent="\t", ensure_ascii=False))
     return JSONResponse(content=res)
+
+
+def htmlToText(html):
+    return re.sub(pattern="<[^>]*>", repl="", string=html.text.strip()).replace(" ", "")

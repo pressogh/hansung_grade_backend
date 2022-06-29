@@ -8,7 +8,7 @@ import os
 import requests
 
 import config
-from util import parseGrade, parseInfo
+from util import *
 
 app = FastAPI()
 
@@ -36,12 +36,12 @@ def get_settings():
 
 
 @app.post("/api/grade")
-async def get_grade(account: Account, settings: config.Settings = Depends(get_settings)):
-    id = account.username
+async def getGrade(account: Account, settings: config.Settings=Depends(get_settings)):
+    username = account.username
     passwd = account.password
 
     data = {
-        "id": id,
+        "id": username,
         "passwd": passwd,
         "changePass": "",
         "return_url": "null"
@@ -53,13 +53,31 @@ async def get_grade(account: Account, settings: config.Settings = Depends(get_se
     return parseGrade(session, settings.GRADE_URL)
 
 
-@app.post("/api/info")
-async def get_info(account: Account, settings: config.Settings = Depends(get_settings)):
-    id = account.username
+@app.post("/api/nowgrade")
+async def getNowGrade(account: Account, settings: config.Settings=Depends(get_settings)):
+    username = account.username
     passwd = account.password
 
     data = {
-        "id": id,
+        "id": username,
+        "passwd": passwd,
+        "changePass": "",
+        "return_url": "null"
+    }
+
+    session = requests.Session()
+    session.post(settings.LOGIN_URL, data=data)
+
+    return parseNowGrade(session, settings.NOW_SEMESTER_GRADE_URL)
+
+
+@app.post("/api/info")
+async def getInfo(account: Account, settings: config.Settings=Depends(get_settings)):
+    username = account.username
+    passwd = account.password
+
+    data = {
+        "id": username,
         "passwd": passwd,
         "changePass": "",
         "return_url": "null"

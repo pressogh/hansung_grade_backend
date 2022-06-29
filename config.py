@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     LOGIN_URL: str
     GRADE_URL: str
     INFO_URL: str
+    NOW_SEMESTER_GRADE_URL: str
 
     class Config:
         env_file = ".env"
