@@ -10,6 +10,20 @@ from data import HEADER
 
 header = HEADER
 
+gradeWeight = {
+    "A+": 4.5,
+    "A0": 4.0,
+    "B+": 3.5,
+    "B0": 3.0,
+    "C+": 2.5,
+    "C0": 2.0,
+    "D+": 1.5,
+    "D0": 1.0,
+    "F0": 0.0,
+    "P": 1.0,
+    "N": 0.0
+}
+
 
 def parseGrade(session, address):
     grade_page = session.get(address, headers=header).text
@@ -63,10 +77,11 @@ def parseNowGrade(session, address):
 
     soup = bs4(now_semester_grade_page, 'lxml')
 
+    semester = htmlToText(soup.select('table')[1].select('tr > td')[2])[:11]
     data = soup.select('table')[3].select('tr')[1:]
 
     res = {}
-    resList = []
+    subject_list = []
     dataTitle = {
         "1": "code",
         "2": "name",
@@ -75,21 +90,43 @@ def parseNowGrade(session, address):
         "9": "grade"
     }
 
+    total_credits, register_credits, earned_credits, total_score = 0, 0, 0, 0
     needIndex = [1, 2, 4, 5, 9]
     for item in data:
         itemList = item.select('td')
 
         itemDict = {}
-        index = 0
+        index, lastCredits = 0, ""
         for p in itemList:
             p = htmlToText(p)
 
             if index in needIndex:
                 itemDict[dataTitle[str(index)]] = p
+
+                if index == 5:
+                    register_credits += int(p)
+                    lastCredits = p
+                if index == 9:
+                    total_credits += gradeWeight[p]
+                    if p != "F0" and p != "N":
+                        earned_credits += int(lastCredits)
+
+                    total_score += gradeWeight[p] * int(lastCredits)
+
             index += 1
 
-        resList.append(itemDict)
-    return JSONResponse(content=resList)
+        subject_list.append(itemDict)
+
+    # 학점 : 성적의 총 합 / 수강 학점의 총 합
+    res["average_credits"] = str(total_credits / len(subject_list))[:4]
+    # 얻은 학점 : 수강 학점의 총 합 - f나 np를 받은 과목 학점의 총 합
+    res["register_credits"] = register_credits
+    res["earned_credits"] = earned_credits
+    res["semester"] = semester
+    res["subject"] = subject_list
+    res["total_score"] = total_score
+
+    return JSONResponse(content=res)
 
 
 def parseInfo(session, address):
