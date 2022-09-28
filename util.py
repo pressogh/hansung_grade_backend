@@ -41,8 +41,8 @@ def parseGrade(session, address):
     for item in data:
         res = {}
         semester = re.sub(pattern="<[^>]*>", repl="",
-                          string=item.select('span[class="objHeading_h3 text-white"]')[0].text).strip()
-        res["semester"] = semester
+                          string=item.select('span[class="objHeading_h3 text-white"]')[0].text).strip().replace(" ", '')
+        res["semester"] = semester[:7] + " " + semester[7:]
 
         credits = item.select('div[class="div_sub_subdiv card card-info"] > div[class="card-body"]')
         credits_list = []
