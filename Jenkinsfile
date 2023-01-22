@@ -9,21 +9,25 @@ pipeline {
         stage('Build Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh 'docker build --platform linux/arm64 -t $USERNAME/hansung-grade-backend:latest .'
+                    sh 'docker build --platform linux/arm64 -t $USERNAME/$JOB_NAME:latest .'
                 }
             }
         }
         stage('Push Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh 'docker login -u $USERNAME -p $PASSWORD'
-                    sh 'docker push $USERNAME/hansung-grade-backend:latest'
+                    sh 'docker login -u $USERNAME --password-stdin $PASSWORD'
+                    sh 'docker push $USERNAME/$JOB_NAME:latest'
                 }
             }
         }
         stage('Deploy') {
             steps {
-                sh 'docker container update --restart unless-stopped hansung-grade-backend'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh 'docker login -u $USERNAME --password-stdin $PASSWORD'
+                    sh 'docker pull $USERNAME/$JOB_NAME:latest'
+                    sh 'docker container update --restart unless-stopped $USERNAME/$JOB_NAME'
+                }
             }
         }
     }
