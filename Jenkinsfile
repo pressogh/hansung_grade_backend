@@ -9,7 +9,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh 'docker build --platform linux/amd64,linux/arm64,linux/arm/v7 -t $USERNAME/hansung-grade-backend:$BUILD_NUMBER .'
+                    sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t $USERNAME/hansung-grade-backend:$BUILD_NUMBER .'
                 }
             }
         }
