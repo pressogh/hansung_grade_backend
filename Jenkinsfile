@@ -3,7 +3,7 @@ node {
         checkout scm
     }
     stage('Build Image') {
-        app = docker.build("pressodh/hansung-grade-backend", "--platform linux/amd64")
+        app = docker.build("pressodh/hansung-grade-backend", "--platform linux/amd64 .")
     }
     stage('Push Image') {
         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
