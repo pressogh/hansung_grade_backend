@@ -9,7 +9,6 @@ pipeline {
         stage('Build Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh 'docker buildx create --name builder --driver docker-container --use'
                     sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t $USERNAME/hansung-grade-backend:$BUILD_NUMBER .'
                 }
             }
