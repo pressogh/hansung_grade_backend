@@ -30,7 +30,7 @@ pipeline {
                     sh 'docker run -d \
                         --name $JOB_NAME \
                         -p 8000:8000 \
-                        --restart=unless-stop \
+                        --restart unless-stop \
                         -v hansung-grade:/hansung-grade \
                         -e "TZ=Asia/Seoul" \
                         $USERNAME/$JOB_NAME:latest'
