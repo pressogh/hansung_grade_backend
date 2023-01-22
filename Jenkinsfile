@@ -25,8 +25,12 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh 'docker pull $USERNAME/$JOB_NAME:latest'
-                    sh 'docker stop $JOB_NAME'
-                    sh 'docker rm $JOB_NAME'
+                    try {
+                        sh 'docker stop $JOB_NAME'
+                        sh 'docker rm $JOB_NAME'
+                    } catch (Exception e) {
+                        echo 'Container not found'
+                    }
                     sh 'docker run -d \
                         --name $JOB_NAME \
                         -p 8000:8000 \
