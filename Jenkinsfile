@@ -21,10 +21,9 @@ pipeline {
                 }
             }
         }
-        stage('Add New Docker Container') {
+        stage('Deploy') {
             steps {
-                sh pwd
-                sh 'docker-compose -f /app/docker-compose.yml up -d'
+                docker container update --restart unless-stopped hansung-grade-backend
             }
         }
     }
