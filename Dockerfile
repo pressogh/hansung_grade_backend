@@ -1,5 +1,5 @@
 #!/bin/bash
-FROM tiangolo/uvicorn-gunicorn:python3.10
+FROM ghcr.io/multi-py/python-gunicorn-uvicorn:py3.10-LATEST
 
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
