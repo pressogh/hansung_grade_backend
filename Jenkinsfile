@@ -23,6 +23,7 @@ pipeline {
         }
         stage('Add New Docker Container') {
             steps {
+                sh pwd
                 sh 'docker-compose -f /app/docker-compose.yml up -d'
             }
         }
