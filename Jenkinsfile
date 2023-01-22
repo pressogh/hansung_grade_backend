@@ -24,7 +24,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh 'docker login -u $USERNAME --password-stdin $PASSWORD'
                     sh 'docker pull $USERNAME/$JOB_NAME:latest'
                     sh 'docker container update --restart unless-stopped $USERNAME/$JOB_NAME'
                 }
