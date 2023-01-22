@@ -23,7 +23,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                docker container update --restart unless-stopped hansung-grade-backend
+                sh 'docker container update --restart unless-stopped hansung-grade-backend'
             }
         }
     }
