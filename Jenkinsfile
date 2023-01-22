@@ -9,7 +9,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh 'docker build --platform linux/arm64 -t $USERNAME/$JOB_NAME:$BUILD_NUMBER .'
+                    sh 'docker build --platform linux/arm64 -t $USERNAME/hansung-grade-backend:$BUILD_NUMBER .'
                 }
             }
         }
@@ -17,7 +17,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh 'docker login -u $USERNAME -p $PASSWORD'
-                    sh 'docker push $USERNAME/$JOB_NAME:$BUILD_NUMBER'
+                    sh 'docker push $USERNAME/hansung-grade-backend:$BUILD_NUMBER'
                 }
             }
         }
