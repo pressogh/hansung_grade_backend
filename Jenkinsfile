@@ -25,7 +25,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh 'docker pull $USERNAME/$JOB_NAME:latest'
-                    sh 'docker container update --restart unless-stopped $USERNAME/$JOB_NAME:latest'
+                    sh 'docker update --restart unless-stopped $USERNAME/$JOB_NAME:latest'
                 }
             }
         }
