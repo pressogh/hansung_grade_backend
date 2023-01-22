@@ -25,19 +25,21 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh 'docker pull $USERNAME/$JOB_NAME:latest'
-                    try {
-                        sh 'docker stop $JOB_NAME'
-                        sh 'docker rm $JOB_NAME'
-                    } catch (Exception e) {
-                        echo 'Container not found'
+                    script {
+                        try {
+                            sh 'docker stop $JOB_NAME'
+                            sh 'docker rm $JOB_NAME'
+                        } catch (Exception e) {
+                            echo 'Container not found'
+                        }
+                        sh 'docker run -d \
+                            --name $JOB_NAME \
+                            -p 8000:8000 \
+                            --restart unless-stop \
+                            -v hansung-grade:/hansung-grade \
+                            -e "TZ=Asia/Seoul" \
+                            $USERNAME/$JOB_NAME:latest'
                     }
-                    sh 'docker run -d \
-                        --name $JOB_NAME \
-                        -p 8000:8000 \
-                        --restart unless-stop \
-                        -v hansung-grade:/hansung-grade \
-                        -e "TZ=Asia/Seoul" \
-                        $USERNAME/$JOB_NAME:latest'
                 }
             }
         }
