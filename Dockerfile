@@ -1,3 +1,4 @@
+#!/bin/bash
 FROM tiangolo/uvicorn-gunicorn:python3.10
 
 COPY requirements.txt /tmp/requirements.txt
