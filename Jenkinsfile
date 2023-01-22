@@ -1,17 +1,31 @@
-node {
-    stage('Checkout') {
-        checkout scm
+pipeline {
+    agent any
+    environment {
+        DOCKER_USERNAME = credentials('docker-hub').username
+        DOCKER_PASSWORD = credentials('docker-hub').password
+        DOCKER_IMAGE_NAME = '${env.JOB_NAME}'
     }
-    stage('Build Image') {
-        app = docker.build("pressodh/hansung-grade-backend", "--platform linux/arm64 .")
-    }
-    stage('Push Image') {
-        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
         }
-    }
-    stage('Add New Docker Container') {
-        sh 'cd /app && docker-compose up -d --build'
+        stage('Build Image') {
+            steps {
+                sh 'docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:$BUILD_NUMBER .'
+            }
+        }
+        stage('Push Image') {
+            steps {
+                sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                sh 'docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:$BUILD_NUMBER'
+            }
+        }
+        stage('Add New Docker Container') {
+            steps {
+                sh 'cd /app && docker-compose up -d --build'
+            }
+        }
     }
 }
