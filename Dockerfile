@@ -8,4 +8,7 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 COPY . /app
 
 WORKDIR /app
+RUN touch /app/logs/access.log
+RUN touch /app/logs/error.log
+
 CMD ["gunicorn", "-c", "gunicorn_conf.py", "main:app"]
