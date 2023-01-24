@@ -31,5 +31,5 @@ RUN echo "Group=www-data" >> /etc/systemd/system/gunicorn.service
 RUN echo "WorkingDirectory=/app" >> /etc/systemd/system/gunicorn.service
 RUN echo "ExecStart=gunicorn -c /app/gunicorn_conf.py main:app" >> /etc/systemd/system/gunicorn.service
 
-CMD ["sudo", "systemctl", "start", "gunicorn.socket"]
-CMD ["sudo", "systemctl", "enable", "gunicorn.socket"]
+CMD ["systemctl", "start", "gunicorn.socket"]
+CMD ["systemctl", "enable", "gunicorn.socket"]
