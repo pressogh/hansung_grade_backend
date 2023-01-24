@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 COPY . /app
 
 WORKDIR /app
-CMD ["gunicorn", "-c", "gunicorn.conf.py", "main:app"]
+CMD ["gunicorn", "-c", "gunicorn_conf.py", "main:app"]
