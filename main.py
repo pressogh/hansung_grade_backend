@@ -32,6 +32,9 @@ class Account(BaseModel):
 
 @lru_cache()
 def get_settings():
+    if os.getenv("DEBUG") == "true":
+        return config.Settings(_env_file=".env.dev")
+
     return config.Settings()
 
 
