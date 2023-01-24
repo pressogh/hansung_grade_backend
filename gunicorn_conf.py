@@ -9,5 +9,5 @@ worker_class = 'uvicorn.workers.UvicornWorker'
 
 # Logging Options
 loglevel = 'info'
-accesslog = './logs/access_log'
-errorlog =  './logs/error_log'
+accesslog = '/hansung-grade-backend/logs/access_log'
+errorlog =  '/hansung-grade-backend/logs/error_log'
