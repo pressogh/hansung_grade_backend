@@ -38,6 +38,7 @@ pipeline {
                             --restart unless-stopped \
                             -v hansung-grade:/hansung-grade \
                             -e "TZ=Asia/Seoul" \
+                            --privileged \
                             $USERNAME/$JOB_NAME:latest'
                     }
                 }
