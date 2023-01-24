@@ -1,7 +1,7 @@
 from multiprocessing import cpu_count
 
 # Socket Path
-bind = 'unix:/hansung-grade-backend/gunicorn.sock'
+bind = 'unix:/run/gunicorn.sock'
 
 # Worker Options
 workers = cpu_count() * 2 + 1
