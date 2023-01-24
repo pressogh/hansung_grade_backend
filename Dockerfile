@@ -27,10 +27,10 @@ RUN echo "Requires=gunicorn.socket" >> /etc/systemd/system/gunicorn.service
 RUN echo "After=network.target" >> /etc/systemd/system/gunicorn.service
 RUN echo "" >> /etc/systemd/system/gunicorn.service
 RUN echo "[Service]" >> /etc/systemd/system/gunicorn.service
-RUN echo "User=hansung-grade-backend" >> /etc/systemd/system/gunicorn.service
+RUN echo "User=user" >> /etc/systemd/system/gunicorn.service
 RUN echo "Group=www-data" >> /etc/systemd/system/gunicorn.service
 RUN echo "WorkingDirectory=/app" >> /etc/systemd/system/gunicorn.service
 RUN echo "ExecStart=gunicorn -c /app/gunicorn_conf.py main:app" >> /etc/systemd/system/gunicorn.service
 
-CMD ["systemctl", "start", "gunicorn.socket"]
-CMD ["systemctl", "enable", "gunicorn.socket"]
+# start gunicorn.socket
+RUN systemctl start gunicorn.socket
