@@ -8,6 +8,8 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 COPY . /app
 
 WORKDIR /app
+
+RUN mkdir /app/logs
 RUN touch /app/logs/access.log
 RUN touch /app/logs/error.log
 
