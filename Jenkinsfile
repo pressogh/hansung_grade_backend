@@ -9,7 +9,7 @@ pipeline {
         stage('Set environment values from Jenkins') {
 			steps {
 				withCredentials([file(credentialsId: 'hansung-grade-backend-env', variable: 'FILE')]) {
-					sh 'cat $FILE | while read line; do export $line; done'
+				    sh 'cp $FILE .env'
 				}
 			}
 		}
