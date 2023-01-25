@@ -6,6 +6,13 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Set environment values from Jenkins') {
+			steps {
+				withCredentials([file(credentialsId: 'hansung-grade-backend-env', variable: 'FILE')]) {
+					sh 'cat $FILE | while read line; do export $line; done'
+				}
+			}
+		}
         stage('Build Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
