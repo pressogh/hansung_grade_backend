@@ -31,7 +31,7 @@ def parseGrade(session, address):
     if len(grade_page) < 1000:
         raise HTTPException(status_code=401, detail="아이디나 비밀번호가 잘못되었습니다.")
 
-    soup = bs4(grade_page[40000:], 'lxml')
+    soup = bs4(grade_page, 'lxml')
     data = soup.select('div.row > div[class="col-12 col-lg-6 col-print-6"]')
 
     credits_string = ["register_credits", "earned_credits", "total_score", "average_credits", "percentile"]
