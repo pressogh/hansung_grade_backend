@@ -6,7 +6,7 @@ COPY . /app
 WORKDIR /app
 
 RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 RUN mkdir /app/logs
 RUN touch /app/logs/access.log
