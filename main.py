@@ -1,12 +1,14 @@
-from typing import Optional
-from fastapi import FastAPI
+from functools import lru_cache
+from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import os
 
 import requests
-from util import parse
+
+import config
+from util import *
 
 app = FastAPI()
 
@@ -28,22 +30,63 @@ class Account(BaseModel):
     password: str
 
 
+@lru_cache()
+def get_settings():
+    return config.Settings(_env_file='.env')
+
+
 @app.post("/api/grade")
-async def get_grade(account: Account):
-    id = account.username
+async def getGrade(account: Account, settings: config.Settings=Depends(get_settings)):
+    username = account.username
     passwd = account.password
 
     data = {
-        "id": id,
+        "id": username,
         "passwd": passwd,
         "changePass": "",
         "return_url": "null"
     }
 
     session = requests.Session()
-    session.post("https://info.hansung.ac.kr/servlet/s_gong.gong_login_ssl", data=data)
+    session.post(settings.LOGIN_URL, data=data)
 
-    return parse(session, "https://info.hansung.ac.kr/jsp_21/student/grade/total_grade.jsp?viewMode=oc")
+    return parseGrade(session, settings.GRADE_URL)
+
+
+@app.post("/api/nowgrade")
+async def getNowGrade(account: Account, settings: config.Settings=Depends(get_settings)):
+    username = account.username
+    passwd = account.password
+
+    data = {
+        "id": username,
+        "passwd": passwd,
+        "changePass": "",
+        "return_url": "null"
+    }
+
+    session = requests.Session()
+    session.post(settings.LOGIN_URL, data=data)
+
+    return parseNowGrade(session, settings.NOW_SEMESTER_GRADE_URL)
+
+
+@app.post("/api/info")
+async def getInfo(account: Account, settings: config.Settings=Depends(get_settings)):
+    username = account.username
+    passwd = account.password
+
+    data = {
+        "id": username,
+        "passwd": passwd,
+        "changePass": "",
+        "return_url": "null"
+    }
+
+    session = requests.Session()
+    session.post(settings.LOGIN_URL, data=data)
+
+    return parseInfo(session, settings.INFO_URL)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", default=443)), log_level="info")
