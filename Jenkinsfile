@@ -43,7 +43,7 @@ pipeline {
                             --name $JOB_NAME \
                             -p 8000:8000 \
                             --restart unless-stopped \
-                            -v hansung-grade:/hansung-grade \
+                            -v /tmp:/tmp $JOB_NAME.sock \
                             -e "TZ=Asia/Seoul" \
                             $USERNAME/$JOB_NAME:latest'
                     }
