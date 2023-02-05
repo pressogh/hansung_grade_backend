@@ -13,7 +13,7 @@ from util import *
 app = FastAPI()
 
 origins = [
-    "*"
+    "https://hanum.presso.codes"
 ]
 
 app.add_middleware(
