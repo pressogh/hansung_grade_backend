@@ -49,13 +49,13 @@ pipeline {
                 }
             }
         }
-        post {
-            success {
-                slackSend (channel: "#빌드-로그", color: "good", message: "${env.JOB_NAME} Build successful\n`${env.JOB_NAME}#${env.BUILD_NUMBER}` \n<${env.BUILD_URL}|Open in Jenkins>")
-            }
-            failure {
-                slackSend (channel: "#빌드-로그", color: "#FF0000", message: "${env.JOB_NAME} Build failed\n`${env.JOB_NAME}#${env.BUILD_NUMBER}` \n<${env.BUILD_URL}|Open in Jenkins>")
-            }
+    }
+    post {
+        success {
+            slackSend (channel: "#빌드-로그", color: "good", message: "${env.JOB_NAME} Build successful\n`${env.JOB_NAME}#${env.BUILD_NUMBER}` \n<${env.BUILD_URL}|Open in Jenkins>")
+        }
+        failure {
+            slackSend (channel: "#빌드-로그", color: "#FF0000", message: "${env.JOB_NAME} Build failed\n`${env.JOB_NAME}#${env.BUILD_NUMBER}` \n<${env.BUILD_URL}|Open in Jenkins>")
         }
     }
 }
