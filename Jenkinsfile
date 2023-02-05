@@ -41,7 +41,6 @@ pipeline {
                         }
                         sh 'docker run -d \
                             --name $JOB_NAME \
-                            -p 8000:8000 \
                             --restart unless-stopped \
                             -v /tmp:/tmp \
                             -e "TZ=Asia/Seoul" \
