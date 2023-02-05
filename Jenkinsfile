@@ -49,5 +49,13 @@ pipeline {
                 }
             }
         }
+        stage ('Publish Results') {
+            steps{
+                script{
+                    echo "End"
+                    slackSend color: "good", message: "WSGI Build successful: `${env.JOB_NAME}#${env.BUILD_NUMBER}` \n<${env.BUILD_URL}|Open in Jenkins>"
+                }
+            }
+        }
     }
 }
